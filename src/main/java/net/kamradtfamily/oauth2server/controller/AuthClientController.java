@@ -23,7 +23,7 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
-import net.kamradtfamily.oauth2server.service.OAuth2Service;
+import net.kamradtfamily.oauth2server.service.AuthClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,31 +36,31 @@ import net.kamradtfamily.oauth2server.response.AuthClientResponse;
 
 @RestController
 @RequestMapping(path = "/client")
-public class OAuth2Controller {
+public class AuthClientController {
 
     @Autowired
-    private OAuth2Service oauth2Service;
+    private AuthClientService authClientService;
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthClientResponse> getClientById(@PathVariable String id) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.authClientById(id)));
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.authClientById(id)));
     }
 
     @GetMapping("/")
     public ResponseEntity<List<AuthClientResponse>> getAllClients() {
-        return ResponseEntity.ok(StreamSupport.stream(oauth2Service.allAuthClients().spliterator(), true)
+        return ResponseEntity.ok(StreamSupport.stream(authClientService.allAuthClients().spliterator(), true)
                 .map(AuthClientResponse::fromAuthClient)
                 .collect(Collectors.toList()));
     }
     
     @PostMapping("/")
     public ResponseEntity<AuthClientResponse> addClient(@RequestBody AuthClientRequest req) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.addAuthClient(AuthClientRequest.toAuthClient(req))));
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.addAuthClient(AuthClientRequest.toAuthClient(req))));
     }
     
     @DeleteMapping("/{id}")
     public void deleteClient(@PathVariable String id) {
-        oauth2Service.deleteAuthClient(id);
+        authClientService.deleteAuthClient(id);
     }
 
 }

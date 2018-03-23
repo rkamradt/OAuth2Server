@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OAuth2Service {
+public class AuthClientService {
 
     @Autowired
     private AuthClientRepository authClientRepository;
@@ -50,4 +50,5 @@ public class OAuth2Service {
     public void deleteAuthClient(String id) {
         authClientRepository.deleteById(id);
     }
+
 }
