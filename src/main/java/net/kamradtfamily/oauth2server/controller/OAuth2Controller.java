@@ -55,7 +55,7 @@ public class OAuth2Controller {
     
     @PostMapping("/")
     public ResponseEntity<AuthClientResponse> addClient(@RequestBody AuthClientRequest req) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.addAuthClient(null)));
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.addAuthClient(AuthClientRequest.toAuthClient(req))));
     }
     
     @DeleteMapping("/{id}")

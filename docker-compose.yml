@@ -1,11 +1,10 @@
 version: '2'
 services:
   web:
-    build: .
+    image: oauth2server:latest
     ports:
     - "8888:8080"
     links:
     - redis
   redis:
     image: redis
-

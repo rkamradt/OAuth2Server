@@ -44,7 +44,6 @@ public class RedisConfig {
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
-        System.out.println("@@@@@@@@@ redis host name: " + hostName + " port: " + hostPort);
         jedisConFactory.setHostName(hostName);
         jedisConFactory.setPort(hostPort);
         return jedisConFactory;

@@ -52,7 +52,7 @@ public class AuthClient implements Serializable {
             byte [] data = salt.digest();
             StringBuilder secret = new StringBuilder();
             for(int i = 0; i < data.length; i++) {
-                byte b = data[i];
+                char b = (char) data[i];
                 secret.append("0123456789ABCDEF".charAt(b%16));
                 secret.append("0123456789ABCDEF".charAt((b/16)%16));
             }
