@@ -29,25 +29,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import net.kamradtfamily.oauth2server.data.Sample;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import net.kamradtfamily.oauth2server.request.AuthClientRequest;
+import net.kamradtfamily.oauth2server.response.AuthClientResponse;
 
 @RestController
-@RequestMapping(path = "/sample")
+@RequestMapping(path = "/client")
 public class OAuth2Controller {
 
     @Autowired
-    private OAuth2Service sampleService;
+    private OAuth2Service oauth2Service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sample> getById(@PathVariable Integer id) {
-        Sample sample = sampleService.sampleById(id);
-        return ResponseEntity.ok(sample);
+    public ResponseEntity<AuthClientResponse> getClientById(@PathVariable String id) {
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.authClientById(id)));
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Sample>> getByIds() {
-        List<Sample> list = sampleService.allSamples();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<List<AuthClientResponse>> getAllClients() {
+        return ResponseEntity.ok(StreamSupport.stream(oauth2Service.allAuthClients().spliterator(), true)
+                .map(AuthClientResponse::fromAuthClient)
+                .collect(Collectors.toList()));
+    }
+    
+    @PostMapping("/")
+    public ResponseEntity<AuthClientResponse> addClient(@RequestBody AuthClientRequest req) {
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(oauth2Service.addAuthClient(null)));
+    }
+    
+    @DeleteMapping("/{id}")
+    public void deleteClient(@PathVariable String id) {
+        oauth2Service.deleteAuthClient(id);
     }
 
 }

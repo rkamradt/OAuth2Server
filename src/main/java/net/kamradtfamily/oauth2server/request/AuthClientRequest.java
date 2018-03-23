@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.data;
+package net.kamradtfamily.oauth2server.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.kamradtfamily.oauth2server.data.AuthClient;
 import org.immutables.value.Value;
 
 /**
@@ -31,17 +32,11 @@ import org.immutables.value.Value;
  * @author randalkamradt
  */
 @Value.Immutable
-@JsonDeserialize(as = ImmutableSample.class)
-public interface Sample {
-
-    public static Sample build(String val1, String val2) {
-        return ImmutableSample.builder()
-                .val1(val1)
-                .val2(val2)
-                .build();
+@JsonDeserialize(as = ImmutableAuthClientRequest.class)
+public interface AuthClientRequest {
+    String name();
+    static AuthClient toAuthClient(AuthClientRequest authClientRequest) {
+        return new AuthClient(authClientRequest.name());
     }
-
-    String val1();
-
-    String val2();
+    
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,24 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.springbootboilerplate.test;
+package net.kamradtfamily.oauth2server.exception;
 
-import java.util.List;
-import net.kamradtfamily.oauth2server.response.AuthClientResponse;
-import net.kamradtfamily.oauth2server.service.OAuth2Service;
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class ApplicationTests extends SpringBaseTest {
-
-    @Autowired
-    private OAuth2Service sampleService;
-
-    @Test
-    public void getSample() {
-//        List<AuthClientResponse> allSamples = sampleService.allAuthClients();
-//        assertEquals(4, allSamples.size());
+/**
+ *
+ * @author randalkamradt
+ */
+@ResponseStatus(value=HttpStatus.NOT_FOUND) 
+public class EntityNotFoundException extends RuntimeException {
+    public EntityNotFoundException(String msg) {
+        super(msg);
     }
-
+    
 }

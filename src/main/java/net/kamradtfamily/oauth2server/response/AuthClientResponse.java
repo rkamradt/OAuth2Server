@@ -21,24 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.springbootboilerplate.test;
+package net.kamradtfamily.oauth2server.response;
 
-import java.util.List;
-import net.kamradtfamily.oauth2server.response.AuthClientResponse;
-import net.kamradtfamily.oauth2server.service.OAuth2Service;
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.kamradtfamily.oauth2server.data.AuthClient;
+import org.immutables.value.Value;
 
-public class ApplicationTests extends SpringBaseTest {
-
-    @Autowired
-    private OAuth2Service sampleService;
-
-    @Test
-    public void getSample() {
-//        List<AuthClientResponse> allSamples = sampleService.allAuthClients();
-//        assertEquals(4, allSamples.size());
+/**
+ *
+ * @author randalkamradt
+ */
+@Value.Immutable
+@JsonDeserialize(as = ImmutableAuthClientResponse.class)
+public interface AuthClientResponse {
+    String id();
+    String name();
+    String clientId();
+    String clientSecret();
+    static AuthClientResponse fromAuthClient(AuthClient authClient) {
+        return ImmutableAuthClientResponse.builder()
+                .name(authClient.getName())
+                .clientId(authClient.getClientId())
+                .clientSecret(authClient.getClientSecret())
+                .id(authClient.getId())
+                .build();
     }
-
 }

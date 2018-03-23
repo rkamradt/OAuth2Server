@@ -23,31 +23,31 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import net.kamradtfamily.oauth2server.data.Sample;
+import net.kamradtfamily.oauth2server.data.AuthClient;
+import net.kamradtfamily.oauth2server.data.AuthClientRepository;
+import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OAuth2Service {
 
-    Map<Integer, Sample> samples;
+    @Autowired
+    private AuthClientRepository authClientRepository;
 
-    public OAuth2Service() {
-        samples = new HashMap<>();
-        samples.put(0, Sample.build("sample0", ""));
-        samples.put(1, Sample.build("sample0", ""));
-        samples.put(2, Sample.build("sample0", ""));
-        samples.put(3, Sample.build("sample0", ""));
+    public AuthClient authClientById(String id) {
+        return authClientRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Id " + id + " was not found"));
     }
 
-    public Sample sampleById(Integer id) {
-        return samples.get(id);
+    public Iterable<AuthClient> allAuthClients() {
+        return authClientRepository.findAll();
     }
-
-    public List<Sample> allSamples() {
-        return samples.values().stream().collect(Collectors.toList());
+    
+    public AuthClient addAuthClient(AuthClient authClient) {
+        return authClientRepository.save(authClient);
+    }
+    
+    public void deleteAuthClient(String id) {
+        authClientRepository.deleteById(id);
     }
 }
