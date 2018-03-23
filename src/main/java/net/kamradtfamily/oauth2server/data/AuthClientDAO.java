@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,24 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.springbootboilerplate.test;
+package net.kamradtfamily.oauth2server.data;
 
-import java.util.List;
-import net.kamradtfamily.oauth2server.response.AuthClientResponse;
-import net.kamradtfamily.oauth2server.service.AuthClientService;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ApplicationTests extends SpringBaseTest {
-
+/**
+ *
+ * A simple delagate object that narrows down the redis functions
+ * 
+ * @author randalkamradt
+ */
+public class AuthClientDAO {
+    
     @Autowired
-    private AuthClientService sampleService;
+    AuthClientRepository repository;
 
-    @Test
-    public void getSample() {
-//        List<AuthClientResponse> allSamples = sampleService.allAuthClients();
-//        assertEquals(4, allSamples.size());
+    public Optional<AuthClient> findById(String id) {
+        return repository.findById(id);
     }
 
+    public Iterable<AuthClient> findAll() {
+        return repository.findAll();
+    }
+
+    public AuthClient save(AuthClient authClient) {
+        return repository.save(authClient);
+    }
+
+    public void deleteById(String id) {
+        repository.deleteById(id);
+    }
+    
 }

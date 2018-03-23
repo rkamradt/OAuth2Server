@@ -64,7 +64,7 @@ public class AuthTokenController {
                 // must be authenticated through Authorization header
                 return authTokenService.getClientCredentialToken(scope);
         }
-        throw new BadRequestException("grant_type must be authorization_code, or refresh_token");
+        throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");
     }
     
     @GetMapping(value="/authorize")
@@ -73,12 +73,15 @@ public class AuthTokenController {
             @RequestParam(required=false) String redirect_uri,
             @RequestParam(required=false) String scope,
             @RequestParam(required=false) String state) {
-        if("code".equals(response_type)) {
-            authTokenService.authorize(response_type, client_id, redirect_uri);
-        } if("token".equals(response_type)) {
-            authTokenService.authorize(response_type, client_id, redirect_uri);
-        } else {
-            throw new BadRequestException("response_type must be code or token");
+        if(null != response_type) switch (response_type) {
+            case "code":
+                authTokenService.authorize(response_type, client_id, redirect_uri);
+                break;
+            case "token":
+                authTokenService.authorize(response_type, client_id, redirect_uri);
+                break;
+            default:
+                throw new BadRequestException("response_type must be code or token");
         }
     }
     

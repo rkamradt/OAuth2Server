@@ -23,9 +23,9 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
+import java.util.Optional;
 import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientRepository;
-import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
+import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,10 +33,10 @@ import org.springframework.stereotype.Component;
 public class AuthClientService {
 
     @Autowired
-    private AuthClientRepository authClientRepository;
+    private AuthClientDAO authClientRepository;
 
-    public AuthClient authClientById(String id) {
-        return authClientRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Id " + id + " was not found"));
+    public Optional<AuthClient> authClientById(String id) {
+        return authClientRepository.findById(id);
     }
 
     public Iterable<AuthClient> allAuthClients() {

@@ -118,7 +118,6 @@ public class AuthTokenService {
     }
 
     public void authorize(String response_type, String client_id, String redirect_uri) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

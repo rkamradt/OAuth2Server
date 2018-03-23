@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.request.AuthClientRequest;
 import net.kamradtfamily.oauth2server.response.AuthClientResponse;
 
@@ -43,7 +44,7 @@ public class AuthClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthClientResponse> getClientById(@PathVariable String id) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.authClientById(id)));
+        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.authClientById(id).orElseThrow(() -> new EntityNotFoundException("Id " + id + " was not found"))));
     }
 
     @GetMapping("/")
