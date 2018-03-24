@@ -117,4 +117,13 @@ public class AuthClient implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+    
+    @Override
+    public String toString() {
+        return "AuthClient {" +
+                this.clientId + ", " +
+                this.clientSecret + ", " +
+                this.id + ", " +
+                this.name + " }";
+    }
 }

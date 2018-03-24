@@ -25,6 +25,7 @@ package net.kamradtfamily.oauth2server.data;
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * @author randalkamradt
  */
+@Component
 public class AuthClientDAO {
     
     @Autowired
