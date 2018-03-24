@@ -23,6 +23,7 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.service.AuthTokenService;
@@ -47,24 +48,26 @@ public class AuthTokenController {
             String code, 
             String redirect_uri, 
             String client_id, 
-            String client_secret, 
             String username, 
             String password, 
             String scope, 
-            String refresh_token) {
-        if(null != grant_type) switch (grant_type) {
+            String refresh_token,
+            HttpServletRequest request) {
+        if(null == grant_type) {
+            throw new BadRequestException("grant_type must be present");
+        }
+        switch (grant_type) {
             case "authorization_code":
                 return authTokenService.getAuthCodeToken(code, redirect_uri, client_id);
             case "password":
-                // must authenticate with username/password
-                return authTokenService.getPasswordToken(scope);
+                return authTokenService.getPasswordToken(username, password, scope);
             case "refresh_token":
                 return authTokenService.getRefreshToken(refresh_token, scope);
             case "client_credentials":
-                // must be authenticated through Authorization header
-                return authTokenService.getClientCredentialToken(scope);
+                return authTokenService.getClientCredentialToken(request.getUserPrincipal().getName(), scope);
+            default:
+                throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");
         }
-        throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");
     }
     
     @GetMapping(value="/authorize")
@@ -73,7 +76,10 @@ public class AuthTokenController {
             @RequestParam(required=false) String redirect_uri,
             @RequestParam(required=false) String scope,
             @RequestParam(required=false) String state) {
-        if(null != response_type) switch (response_type) {
+        if(null == response_type) {
+            throw new BadRequestException("respose_type must be present");
+        }
+        switch (response_type) {
             case "code":
                 authTokenService.authorize(response_type, client_id, redirect_uri);
                 break;

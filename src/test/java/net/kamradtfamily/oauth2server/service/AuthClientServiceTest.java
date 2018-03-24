@@ -62,7 +62,7 @@ public class AuthClientServiceTest {
     @Before
     public void setUp() {
         instance = new AuthClientService();
-        ReflectionTestUtils.setField(instance, "authClientRepository", new MockAuthClientDAO());
+        ReflectionTestUtils.setField(instance, "authClientDao", new MockAuthClientDAO());
     }
     
     @After

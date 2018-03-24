@@ -24,11 +24,16 @@
 package net.kamradtfamily.oauth2server.service;
 
 import java.util.UUID;
-import net.kamradtfamily.oauth2server.data.AuthClientRepository;
+import net.kamradtfamily.oauth2server.data.AuthClient;
+import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.exception.BadRequestException;
+import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
+import net.kamradtfamily.oauth2server.exception.ForbiddenException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.response.ImmutableAccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -38,7 +43,7 @@ import org.springframework.stereotype.Component;
 public class AuthTokenService {
 
     @Autowired
-    private AuthClientRepository authClientRepository;
+    private AuthClientDAO authClientDao;
     /**
      * 
      * when grant_type is refresh_token, this is called
@@ -50,13 +55,7 @@ public class AuthTokenService {
      * @return  
      */
     public AccessTokenResponse getRefreshToken(String refreshToken, String scope) {
-        // todo store access token
-        return ImmutableAccessTokenResponse.builder()
-                .access_token(UUID.randomUUID().toString())
-                .expires_in(3600)
-                .token_type("bearer")
-                .scope(scope)
-                .build();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     /**
      * 
@@ -70,13 +69,7 @@ public class AuthTokenService {
      * @return 
      */
     public AccessTokenResponse getAuthCodeToken(String code, String redirectUri, String clientId) {
-        // todo store access token
-        return ImmutableAccessTokenResponse.builder()
-                .access_token(UUID.randomUUID().toString())
-                .expires_in(3600)
-                .token_type("bearer")
-                .scope("all")
-                .build();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -85,13 +78,26 @@ public class AuthTokenService {
      * 
      * as described in RFC 6749 section 4.3.2
      * 
+     * @param clientId
      * @param scope
+     * @param clientSecret
      * @return 
      */
-    public AccessTokenResponse getPasswordToken(String scope) {
-        // todo store access token
+    public AccessTokenResponse getPasswordToken(String clientId, String clientSecret, String scope) {
+        if(StringUtils.isEmpty(clientId)) {
+            throw new BadRequestException("client_id must be present");
+        }
+        if(StringUtils.isEmpty(clientSecret)) {
+            throw new BadRequestException("client_secret must be present");
+        }
+        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
+        AuthClient authClient = authClientDao.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("client_id not known"));
+        if(!clientSecret.equals(authClient.getClientSecret())) {
+            throw new ForbiddenException("forbidden");
+        }
+        authClient.setAuthToken(UUID.randomUUID().toString());
         return ImmutableAccessTokenResponse.builder()
-                .access_token(UUID.randomUUID().toString())
+                .access_token(authClient.getAuthToken())
                 .expires_in(3600)
                 .token_type("bearer")
                 .scope(scope)
@@ -104,13 +110,20 @@ public class AuthTokenService {
      * 
      * as described in RFC 6749 section 4.3.2
      * 
+     * @param clientId
      * @param scope
+     * @param clientSecret
      * @return 
      */
-    public AccessTokenResponse getClientCredentialToken(String scope) {
-        // todo store access token
+    public AccessTokenResponse getClientCredentialToken(String clientId, String scope) {
+        if(StringUtils.isEmpty(clientId)) {
+            throw new BadRequestException("client_id must be present");
+        }
+        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
+        AuthClient authClient = authClientDao.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("client_id not known"));
+        authClient.setAuthToken(UUID.randomUUID().toString());
         return ImmutableAccessTokenResponse.builder()
-                .access_token(UUID.randomUUID().toString())
+                .access_token(authClient.getAuthToken())
                 .expires_in(3600)
                 .token_type("bearer")
                 .scope(scope)
@@ -118,6 +131,7 @@ public class AuthTokenService {
     }
 
     public void authorize(String response_type, String client_id, String redirect_uri) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

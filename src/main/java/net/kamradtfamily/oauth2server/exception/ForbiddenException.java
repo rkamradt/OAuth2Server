@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,34 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.service;
+package net.kamradtfamily.oauth2server.exception;
 
-import java.util.Optional;
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Component
-public class AuthClientService {
-
-    @Autowired
-    private AuthClientDAO authClientDao;
-
-    public Optional<AuthClient> authClientById(String id) {
-        return authClientDao.findById(id);
-    }
-
-    public Iterable<AuthClient> allAuthClients() {
-        return authClientDao.findAll();
+/**
+ *
+ * @author randalkamradt
+ */
+@ResponseStatus(value=HttpStatus.FORBIDDEN) 
+public class ForbiddenException extends RuntimeException {
+    public ForbiddenException(String msg) {
+        super(msg);
     }
     
-    public AuthClient addAuthClient(AuthClient authClient) {
-        return authClientDao.save(authClient);
-    }
-    
-    public void deleteAuthClient(String id) {
-        authClientDao.deleteById(id);
-    }
-
 }

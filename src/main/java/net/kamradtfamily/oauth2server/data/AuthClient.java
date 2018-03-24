@@ -41,6 +41,9 @@ public class AuthClient implements Serializable {
     private String name;
     private String clientId;
     private String clientSecret;
+    private String authToken;
+    private String refreshToken;
+    private String scope;
 
     public AuthClient(String name) {
         try {
@@ -120,10 +123,55 @@ public class AuthClient implements Serializable {
     
     @Override
     public String toString() {
-        return "AuthClient {" +
-                this.clientId + ", " +
-                this.clientSecret + ", " +
-                this.id + ", " +
+        return "AuthClient { clientId: " +
+                this.clientId + ", clientSecret: " +
+                this.clientSecret + ", id:" +
+                this.id + ", authToken: " +
+                this.getAuthToken() + ", refreshToken: " +
+                this.getRefreshToken() + ", scope: " +
+                this.scope + ", name: " +
                 this.name + " }";
+    }
+
+    /**
+     * @return the scope
+     */
+    public String getScope() {
+        return scope;
+    }
+
+    /**
+     * @param scope the scope to set
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * @return the authToken
+     */
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    /**
+     * @param authToken the authToken to set
+     */
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    /**
+     * @return the refreshToken
+     */
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * @param refreshToken the refreshToken to set
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

@@ -21,53 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.data;
+package net.kamradtfamily.oauth2server.controller;
 
-import java.util.Optional;
-import java.util.stream.StreamSupport;
+import net.kamradtfamily.oauth2server.data.AuthClient;
+import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
+import net.kamradtfamily.oauth2server.response.IdentityResponse;
+import net.kamradtfamily.oauth2server.response.ImmutableIdentityResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * A simple delagate object that narrows down the redis functions
- * 
  * @author randalkamradt
  */
-@Component
-public class AuthClientDAO {
+@RestController("/identity")
+public class IdentityController {
     
     @Autowired
-    AuthClientRepository repository;
-
-    public Optional<AuthClient> findById(String id) {
-        return repository.findById(id);
-    }
-
-    public Iterable<AuthClient> findAll() {
-        return repository.findAll();
-    }
-
-    public AuthClient save(AuthClient authClient) {
-        return repository.save(authClient);
-    }
-
-    public void deleteById(String id) {
-        repository.deleteById(id);
-    }
-
-    public Optional<AuthClient> findByClientId(String clientId) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getClientId().equals(clientId))
-                .findFirst();
-    }
-
-    public Optional<AuthClient> findByToken(String token) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getAuthToken().equals(token))
-                .findFirst();
-    }
+    private AuthClientDAO authClientDao;
     
+    @GetMapping("/{token}")
+    IdentityResponse getIdentity(@PathVariable String token) {
+        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
+        AuthClient authClient = authClientDao.findByToken(token).orElseThrow(() -> new EntityNotFoundException("token not valid"));
+        return IdentityResponse.fromAuthClient(authClient);
+    }
 }

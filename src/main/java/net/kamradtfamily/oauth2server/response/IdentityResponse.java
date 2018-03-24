@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,34 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.service;
+package net.kamradtfamily.oauth2server.response;
 
-import java.util.Optional;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.immutables.value.Value;
+import org.springframework.lang.Nullable;
 
-@Component
-public class AuthClientService {
-
-    @Autowired
-    private AuthClientDAO authClientDao;
-
-    public Optional<AuthClient> authClientById(String id) {
-        return authClientDao.findById(id);
+/**
+ *
+ * @author randalkamradt
+ */
+@Value.Immutable
+@JsonDeserialize(as = ImmutableIdentityResponse.class)
+public interface IdentityResponse {
+    String name();
+    String id();
+    String clientId();
+    @Nullable String role();
+    static IdentityResponse fromAuthClient(AuthClient authClient) {
+        return ImmutableIdentityResponse.builder()
+                .name(authClient.getName())
+                .clientId(authClient.getClientId())
+                .id(authClient.getId())
+                .role(authClient.getScope())
+                .build();
     }
-
-    public Iterable<AuthClient> allAuthClients() {
-        return authClientDao.findAll();
-    }
-    
-    public AuthClient addAuthClient(AuthClient authClient) {
-        return authClientDao.save(authClient);
-    }
-    
-    public void deleteAuthClient(String id) {
-        authClientDao.deleteById(id);
-    }
-
 }

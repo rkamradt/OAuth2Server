@@ -23,6 +23,10 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
+import net.kamradtfamily.oauth2server.data.AuthClient;
+import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.exception.BadRequestException;
+import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,6 +43,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class AuthTokenServiceTest {
     
     private AuthTokenService instance;
+    private AuthClientDAO authTokenDAO;
 
     public AuthTokenServiceTest() {
     }
@@ -54,6 +59,9 @@ public class AuthTokenServiceTest {
     @Before
     public void setUp() {
         instance = new AuthTokenService();
+        authTokenDAO = new AuthClientServiceTest.MockAuthClientDAO();
+        ReflectionTestUtils.setField(instance, "authClientDao", authTokenDAO);
+        authTokenDAO.save(new AuthClient("name1"));
     }
     
     @After
@@ -68,12 +76,12 @@ public class AuthTokenServiceTest {
         System.out.println("getRefreshToken");
         String refreshToken = "";
         String scope = "scope";
-        AccessTokenResponse response = instance.getRefreshToken(refreshToken, scope);
-        assertNotNull(response);
-        assertNotNull(response.access_token());
-        assertEquals("bearer", response.token_type());
-        assertEquals(3600, response.expires_in());
-        assertEquals(scope, response.scope());
+        try {
+            instance.getRefreshToken(refreshToken, scope);
+            fail("expected operation failed");
+        } catch(UnsupportedOperationException ex) {
+            
+        }
     }
 
     /**
@@ -85,26 +93,12 @@ public class AuthTokenServiceTest {
         String code = "";
         String redirectUri = "";
         String clientId = "";
-        AccessTokenResponse response = instance.getAuthCodeToken(code, redirectUri, clientId);
-        assertNotNull(response);
-        assertNotNull(response.access_token());
-        assertEquals("bearer", response.token_type());
-        assertEquals(3600, response.expires_in());
-    }
-
-    /**
-     * Test of getPasswordToken method, of class AuthTokenService.
-     */
-    @Test
-    public void testGetPasswordToken() {
-        System.out.println("getPasswordToken");
-        String scope = "scope";
-        AccessTokenResponse response = instance.getPasswordToken(scope);
-        assertNotNull(response);
-        assertNotNull(response.access_token());
-        assertEquals("bearer", response.token_type());
-        assertEquals(3600, response.expires_in());
-        assertEquals(scope, response.scope());
+        try {
+            instance.getAuthCodeToken(code, redirectUri, clientId);
+            fail("expected operation failed");
+        } catch(UnsupportedOperationException ex) {
+            
+        }
     }
 
     /**
@@ -113,13 +107,28 @@ public class AuthTokenServiceTest {
     @Test
     public void testGetClientCredentialToken() {
         System.out.println("getClientCredentialToken");
-        String scope = "scope";
-        AccessTokenResponse response = instance.getClientCredentialToken(scope);
+        AuthClient authClient = authTokenDAO.findAll().iterator().next();
+        String clientId = authClient.getClientId();
+        String clientSecret = authClient.getClientSecret();
+        String scope = authClient.getScope();
+        AccessTokenResponse response = instance.getClientCredentialToken(clientId, scope);
         assertNotNull(response);
         assertNotNull(response.access_token());
         assertEquals("bearer", response.token_type());
         assertEquals(3600, response.expires_in());
         assertEquals(scope, response.scope());
+        try {
+            instance.getClientCredentialToken(null, null);
+            fail("expected exception not thrown");
+        } catch(BadRequestException ex) {
+            assertEquals("client_id must be present", ex.getMessage());
+        }
+        try {
+            instance.getClientCredentialToken("badclientid", null);
+            fail("expected exception not thrown");
+        } catch(EntityNotFoundException ex) {
+            assertEquals("client_id not known", ex.getMessage());
+        }
     }
 
     /**
@@ -131,7 +140,12 @@ public class AuthTokenServiceTest {
         String response_type = "";
         String client_id = "";
         String redirect_uri = "";
-        instance.authorize(response_type, client_id, redirect_uri);
+        try {
+            instance.authorize(response_type, client_id, redirect_uri);
+            fail("expected operation failed");
+        } catch(UnsupportedOperationException ex) {
+            
+        }
     }
     
 }

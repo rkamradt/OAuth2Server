@@ -58,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("ADMIN");
         try {
+            // need to be able to add without restarting
         StreamSupport.stream(authClient.findAll().spliterator(),false)
                 .forEach(c -> {
                     try {
