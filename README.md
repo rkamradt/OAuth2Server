@@ -1,7 +1,8 @@
 # OAuth2Server
+
 Simple oauth2 server with redis backend
 
-** work in progress!
+## ** This is meant as a toy! Not for use in any real setting!
 
 To build:
   mvn clean install
