@@ -25,6 +25,8 @@ package net.kamradtfamily.oauth2server.controller;
 
 import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.data.Token;
+import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.IdentityResponse;
 import net.kamradtfamily.oauth2server.response.ImmutableIdentityResponse;
@@ -42,11 +44,16 @@ public class IdentityController {
     
     @Autowired
     private AuthClientDAO authClientDao;
+
+    @Autowired
+    private TokenDAO tokenDao;
     
     @GetMapping("/{token}")
     IdentityResponse getIdentity(@PathVariable String token) {
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
-        AuthClient authClient = authClientDao.findByToken(token).orElseThrow(() -> new EntityNotFoundException("token not valid"));
+        Token t = tokenDao.findById(token).orElseThrow(() -> new EntityNotFoundException("token not found"));
+        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
+        AuthClient authClient = authClientDao.findById(t.getClientId()).orElseThrow(() -> new EntityNotFoundException("token not valid"));
         return IdentityResponse.fromAuthClient(authClient);
     }
 }

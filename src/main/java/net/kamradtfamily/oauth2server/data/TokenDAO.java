@@ -35,32 +35,25 @@ import org.springframework.stereotype.Component;
  * @author randalkamradt
  */
 @Component
-public class AuthClientDAO {
+public class TokenDAO {
     
     @Autowired
-    AuthClientRepository repository;
+    TokenRepository repository;
 
-    public Optional<AuthClient> findById(String id) {
+    public Optional<Token> findById(String id) {
         return repository.findById(id);
     }
 
-    public Iterable<AuthClient> findAll() {
+    public Iterable<Token> findAll() {
         return repository.findAll();
     }
 
-    public AuthClient save(AuthClient authClient) {
-        return repository.save(authClient);
+    public Token save(Token token) {
+        return repository.save(token);
     }
 
     public void deleteById(String id) {
         repository.deleteById(id);
-    }
-
-    public Optional<AuthClient> findByClientId(String clientId) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getClientId().equals(clientId))
-                .findFirst();
     }
 
 }

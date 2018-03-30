@@ -23,8 +23,13 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.data.Token;
+import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.response.IdentityResponse;
@@ -63,7 +68,10 @@ public class IdentityControllerTest {
         instance = new IdentityController();
         authTokenDAO = new AuthClientServiceTest.MockAuthClientDAO();
         authTokenService = new AuthTokenService();
+        TokenDAO tokenDao = new MockTokenDAO();
+        ReflectionTestUtils.setField(authTokenService, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(authTokenService, "authClientDao", authTokenDAO);
+        ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(instance, "authClientDao", authTokenDAO);
         authTokenDAO.save(new AuthClient("name1"));
 
@@ -88,8 +96,35 @@ public class IdentityControllerTest {
             instance.getIdentity("badtoken");
             fail("expeceted exception not thrown");
         } catch(EntityNotFoundException ex) {
-            assertEquals("token not valid", ex.getMessage());
+            assertEquals("token not found", ex.getMessage());
         }
+    }
+    public static class MockTokenDAO extends TokenDAO {
+        Map<String, Token> data = new HashMap<>();
+        public MockTokenDAO() {
+        }
+        @Override
+        public Optional<Token> findById(String id) {
+            return Optional.ofNullable(data.get(id));
+        }
+
+        @Override
+        public Iterable<Token> findAll() {
+            return data.values();
+        }
+
+        @Override
+        public Token save(Token token) {
+            data.put(token.getId(), token);
+            return token;
+        }
+
+        @Override
+        public void deleteById(String id) {
+            data.remove(id);
+        }
+
     }
     
 }
+   

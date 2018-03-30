@@ -23,8 +23,10 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
+import net.kamradtfamily.oauth2server.controller.IdentityControllerTest.MockTokenDAO;
 import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
@@ -60,6 +62,8 @@ public class AuthTokenServiceTest {
     public void setUp() {
         instance = new AuthTokenService();
         authTokenDAO = new AuthClientServiceTest.MockAuthClientDAO();
+        TokenDAO tokenDao = new MockTokenDAO();
+        ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(instance, "authClientDao", authTokenDAO);
         authTokenDAO.save(new AuthClient("name1"));
     }

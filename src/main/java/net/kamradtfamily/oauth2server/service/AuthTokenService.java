@@ -23,9 +23,10 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
-import java.util.UUID;
 import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.data.Token;
+import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.exception.ForbiddenException;
@@ -44,6 +45,9 @@ public class AuthTokenService {
 
     @Autowired
     private AuthClientDAO authClientDao;
+    
+    @Autowired
+    private TokenDAO tokenDao;
     /**
      * 
      * when grant_type is refresh_token, this is called
@@ -95,9 +99,9 @@ public class AuthTokenService {
         if(!clientSecret.equals(authClient.getClientSecret())) {
             throw new ForbiddenException("forbidden");
         }
-        authClient.setAuthToken(UUID.randomUUID().toString());
+        Token t = tokenDao.save(new Token(authClient.getId()));
         return ImmutableAccessTokenResponse.builder()
-                .access_token(authClient.getAuthToken())
+                .access_token(t.getId())
                 .expires_in(3600)
                 .token_type("bearer")
                 .scope(scope)
@@ -112,7 +116,6 @@ public class AuthTokenService {
      * 
      * @param clientId
      * @param scope
-     * @param clientSecret
      * @return 
      */
     public AccessTokenResponse getClientCredentialToken(String clientId, String scope) {
@@ -121,9 +124,9 @@ public class AuthTokenService {
         }
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         AuthClient authClient = authClientDao.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("client_id not known"));
-        authClient.setAuthToken(UUID.randomUUID().toString());
+        Token t = tokenDao.save(new Token(authClient.getId()));
         return ImmutableAccessTokenResponse.builder()
-                .access_token(authClient.getAuthToken())
+                .access_token(t.getId())
                 .expires_in(3600)
                 .token_type("bearer")
                 .scope(scope)

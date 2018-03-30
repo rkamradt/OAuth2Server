@@ -45,8 +45,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
+import net.kamradtfamily.oauth2server.controller.IdentityControllerTest.MockTokenDAO;
 import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.data.AuthClientDAO;
+import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.service.AuthClientServiceTest;
@@ -57,7 +59,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.springframework.http.HttpRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -85,6 +86,8 @@ public class AuthTokenControllerTest {
         instance = new AuthTokenController();
         authClientDao = new AuthClientServiceTest.MockAuthClientDAO();
         AuthTokenService authTokenService = new AuthTokenService();
+        TokenDAO tokenDao = new MockTokenDAO();
+        ReflectionTestUtils.setField(authTokenService, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(authTokenService, "authClientDao", authClientDao);
         ReflectionTestUtils.setField(instance, "authTokenService", authTokenService);
         authClientDao.save(new AuthClient("name1"));

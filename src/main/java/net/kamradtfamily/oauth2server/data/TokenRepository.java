@@ -23,44 +23,13 @@
  */
 package net.kamradtfamily.oauth2server.data;
 
-import java.util.Optional;
-import java.util.stream.StreamSupport;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
 
 /**
  *
- * A simple delagate object that narrows down the redis functions
- * 
  * @author randalkamradt
  */
-@Component
-public class AuthClientDAO {
-    
-    @Autowired
-    AuthClientRepository repository;
-
-    public Optional<AuthClient> findById(String id) {
-        return repository.findById(id);
-    }
-
-    public Iterable<AuthClient> findAll() {
-        return repository.findAll();
-    }
-
-    public AuthClient save(AuthClient authClient) {
-        return repository.save(authClient);
-    }
-
-    public void deleteById(String id) {
-        repository.deleteById(id);
-    }
-
-    public Optional<AuthClient> findByClientId(String clientId) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getClientId().equals(clientId))
-                .findFirst();
-    }
-
-}
+@Repository
+public interface TokenRepository extends CrudRepository<Token, String> {}

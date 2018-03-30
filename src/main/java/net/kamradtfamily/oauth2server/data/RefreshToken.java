@@ -23,44 +23,49 @@
  */
 package net.kamradtfamily.oauth2server.data;
 
-import java.util.Optional;
-import java.util.stream.StreamSupport;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
+import java.util.UUID;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  *
- * A simple delagate object that narrows down the redis functions
- * 
  * @author randalkamradt
  */
-@Component
-public class AuthClientDAO {
-    
-    @Autowired
-    AuthClientRepository repository;
+@RedisHash("RefreshToken")
+public class RefreshToken implements Serializable {
+    private String id;
+    private String clientId;
 
-    public Optional<AuthClient> findById(String id) {
-        return repository.findById(id);
+    public RefreshToken(String clientId) {
+        this.id = UUID.randomUUID().toString();
+        this.clientId = clientId;
     }
 
-    public Iterable<AuthClient> findAll() {
-        return repository.findAll();
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
     }
 
-    public AuthClient save(AuthClient authClient) {
-        return repository.save(authClient);
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void deleteById(String id) {
-        repository.deleteById(id);
+    /**
+     * @return the clientId
+     */
+    public String getClientId() {
+        return clientId;
     }
 
-    public Optional<AuthClient> findByClientId(String clientId) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getClientId().equals(clientId))
-                .findFirst();
+    /**
+     * @param clientId the clientId to set
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
-
 }
