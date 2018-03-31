@@ -1,10 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.kamradtfamily</groupId>
+    <parent>
+        <groupId>net.kamradtfamily.oauth2server</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>oauth2servertest</artifactId>
-    <name>OAuth2 Server Integration Tests</name>
-    <version>1.0</version>
+    <name>OAuth2Server Integration Tests</name>
 
     <dependencies>
         <dependency>
@@ -16,7 +20,22 @@
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-http</artifactId>
             <version>1.17.2</version>
-        </dependency>    
+        </dependency>
+        <dependency>
+            <groupId>net.kamradtfamily.OAuth2Server</groupId>
+            <artifactId>oauth2api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+        </dependency>
     </dependencies>
 
     <properties>

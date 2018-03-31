@@ -21,22 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.request;
+package net.kamradtfamily.oauth2server.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.kamradtfamily.oauth2server.data.AuthClient;
 import org.immutables.value.Value;
+import net.kamradtfamily.oauth2server.annotation.Nullable;
 
 /**
- *
+ *   {
+ *     "access_token":"2YotnFZFEjr1zCsicMWpAA",
+ *     "token_type":"example",
+ *     "expires_in":3600,
+ *     "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+ *     "example_parameter":"example_value"
+ *   }
  * @author randalkamradt
  */
 @Value.Immutable
-@JsonDeserialize(as = ImmutableAuthClientRequest.class)
-public interface AuthClientRequest {
-    String name();
-    static AuthClient toAuthClient(AuthClientRequest authClientRequest) {
-        return new AuthClient(authClientRequest.name());
-    }
-    
+@JsonDeserialize(as = ImmutableAccessTokenResponse.class)
+public interface AccessTokenResponse {
+    String access_token();
+    String token_type();
+    int expires_in();
+    @Nullable String refresh_token();
+    @Nullable String scope();
 }

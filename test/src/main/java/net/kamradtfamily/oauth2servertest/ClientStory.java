@@ -31,57 +31,65 @@ import org.jbehave.core.annotations.When;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import com.jcabi.http.Request;
-import com.jcabi.http.request.ApacheRequest;
+import com.jcabi.http.request.JdkRequest;
+import com.jcabi.http.response.JsonResponse;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.ws.rs.core.HttpHeaders;
-
 /**
  *
  * @author randalkamradt
  */
 public class ClientStory {
+
     String name;
     String id;
-    
+
     @Given("a client named $name that will require authorization")
     public void givenClient(String name) {
         System.out.println("*remeber client " + name + "*");
         this.name = name;
     }
-    
+
     @When("the POST verb is issued to the server along with the name")
     public void whenPost() throws IOException {
-    String html = new ApacheRequest("http://localhost:8888")
-      .uri().path("/client").back()
-      .method(Request.POST)
-      .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-      .fetch()
-      .as(RestResponse.class)
-      .assertStatus(HttpURLConnection.HTTP_OK)
-      .body();
-        this.id = UUID.randomUUID().toString();
+        JsonReader ret = new JdkRequest("http://localhost:8888")
+                .uri().path("/client").back()
+                .method(Request.POST)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Basic dXNlcjpwYXNzd29yZA==") // hard coding auth user:password
+                .body().set("{ \"name\": \""+name+"\" }").back()
+                .fetch()
+                .as(JsonResponse.class).json();
+        JsonObject json = ret.readObject();
+        System.out.println("post returned '" + json.toString() + "'");
+        this.id = json.getString("id");
     }
+
     @Then("a complete client with the name $name is created and returned")
     public void thenCreateClient(String name) {
         assertThat(name, equalTo(this.name));
+        assertThat(id, notNullValue());
     }
-    
+
     @Given("a that a client named $name no longer needs authentication")
     public void givenClientToDelete(String name) {
         System.out.println("*remeber client " + name + "*");
         this.name = name;
     }
-    
+
     @When("the DELETE verb is issued along with the record id")
     public void whenDelete() {
         System.out.println("delete client " + name);
         this.id = null;
     }
+
     @Then("all information about the client named $name should be removed")
     public void thenDeleteClient(String name) {
         assertThat(name, equalTo(this.name));
         assertThat(this.id, nullValue());
     }
-    
+
 }

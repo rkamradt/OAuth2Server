@@ -1,7 +1,9 @@
+package net.kamradtfamily.oauth2server.annotation;
+
 /*
  * The MIT License
  *
- * Copyright 2018 Randal Kamradt
+ * Copyright 2018 randalkamradt.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +23,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.response;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import org.immutables.value.Value;
 
 /**
  *
  * @author randalkamradt
  */
-@Value.Immutable
-@JsonDeserialize(as = ImmutableAuthClientResponse.class)
-public interface AuthClientResponse {
-    String id();
-    String name();
-    String clientId();
-    String clientSecret();
-    static AuthClientResponse fromAuthClient(AuthClient authClient) {
-        return ImmutableAuthClientResponse.builder()
-                .name(authClient.getName())
-                .clientId(authClient.getClientId())
-                .clientSecret(authClient.getClientSecret())
-                .id(authClient.getId())
-                .build();
-    }
+public @interface Nullable {
+    
 }

@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("/identity")
 public class IdentityController {
-    
+
     @Autowired
     private AuthClientDAO authClientDao;
 
@@ -54,6 +54,15 @@ public class IdentityController {
         Token t = tokenDao.findById(token).orElseThrow(() -> new EntityNotFoundException("token not found"));
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         AuthClient authClient = authClientDao.findById(t.getClientId()).orElseThrow(() -> new EntityNotFoundException("token not valid"));
-        return IdentityResponse.fromAuthClient(authClient);
+        return IdentityController.fromAuthClient(authClient);
     }
+    private static IdentityResponse fromAuthClient(AuthClient authClient) {
+        return ImmutableIdentityResponse.builder()
+                .clientId(authClient.getClientId())
+                .id(authClient.getId())
+                .name(authClient.getName())
+                .role(authClient.getScope())
+                .build();
+    }
+    
 }

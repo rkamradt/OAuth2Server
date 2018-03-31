@@ -38,7 +38,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -80,9 +79,7 @@ public class AuthClientControllerTest {
         System.out.println("getClientById");
         String name = "name";
         AuthClient authClient = authClientService.addAuthClient(new AuthClient(name));
-        ResponseEntity<AuthClientResponse> response = instance.getClientById(authClient.getId());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AuthClientResponse result = response.getBody();
+        AuthClientResponse result = instance.getClientById(authClient.getId());
         assertNotNull(result);
         assertEquals(name, result.name());
         assertNotNull(result.clientId());
@@ -100,9 +97,7 @@ public class AuthClientControllerTest {
         String name2 = "name2";
         authClientService.addAuthClient(new AuthClient(name1));
         authClientService.addAuthClient(new AuthClient(name2));
-        ResponseEntity<List<AuthClientResponse>> response = instance.getAllClients();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<AuthClientResponse> result = response.getBody();
+        List<AuthClientResponse> result = instance.getAllClients();
         assertNotNull(result);
         assertEquals(2, result.size());
     }
@@ -117,9 +112,7 @@ public class AuthClientControllerTest {
         AuthClientRequest req = ImmutableAuthClientRequest.builder()
                 .name(name)
                 .build();
-        ResponseEntity<AuthClientResponse> response = instance.addClient(req);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AuthClientResponse result = response.getBody();
+        AuthClientResponse result = instance.addClient(req);
         assertNotNull(result);
         assertEquals(name, result.name());
         assertNotNull(result.clientId());
@@ -137,12 +130,9 @@ public class AuthClientControllerTest {
         AuthClientRequest req = ImmutableAuthClientRequest.builder()
                 .name(name)
                 .build();
-        ResponseEntity<AuthClientResponse> resp = instance.addClient(req);
-        AuthClientResponse res = resp.getBody();
+        AuthClientResponse res = instance.addClient(req);
         instance.deleteClient(res.id());
-        ResponseEntity<List<AuthClientResponse>> response = instance.getAllClients();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<AuthClientResponse> result = response.getBody();
+        List<AuthClientResponse> result = instance.getAllClients();
         assertNotNull(result);
         assertEquals(0, result.size());
     }

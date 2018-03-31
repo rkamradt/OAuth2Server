@@ -24,9 +24,8 @@
 package net.kamradtfamily.oauth2server.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.kamradtfamily.oauth2server.data.AuthClient;
+import net.kamradtfamily.oauth2server.annotation.Nullable;
 import org.immutables.value.Value;
-import org.springframework.lang.Nullable;
 
 /**
  *
@@ -39,12 +38,4 @@ public interface IdentityResponse {
     String id();
     String clientId();
     @Nullable String role();
-    static IdentityResponse fromAuthClient(AuthClient authClient) {
-        return ImmutableIdentityResponse.builder()
-                .name(authClient.getName())
-                .clientId(authClient.getClientId())
-                .id(authClient.getId())
-                .role(authClient.getScope())
-                .build();
-    }
 }

@@ -25,15 +25,16 @@ package net.kamradtfamily.oauth2server.controller;
 
 import net.kamradtfamily.oauth2server.service.AuthClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import net.kamradtfamily.oauth2server.data.AuthClient;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.request.AuthClientRequest;
 import net.kamradtfamily.oauth2server.response.AuthClientResponse;
+import net.kamradtfamily.oauth2server.response.ImmutableAuthClientResponse;
 
 @RestController
 @RequestMapping(path = "/client")
@@ -43,25 +44,38 @@ public class AuthClientController {
     private AuthClientService authClientService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthClientResponse> getClientById(@PathVariable String id) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.authClientById(id).orElseThrow(() -> new EntityNotFoundException("Id " + id + " was not found"))));
+    public AuthClientResponse getClientById(@PathVariable String id) {
+        return AuthClientController.fromAuthClient(authClientService.authClientById(id).orElseThrow(() -> new EntityNotFoundException("Id " + id + " was not found")));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<AuthClientResponse>> getAllClients() {
-        return ResponseEntity.ok(StreamSupport.stream(authClientService.allAuthClients().spliterator(), true)
-                .map(AuthClientResponse::fromAuthClient)
-                .collect(Collectors.toList()));
+    @GetMapping("")
+    public List<AuthClientResponse> getAllClients() {
+        return StreamSupport.stream(authClientService.allAuthClients().spliterator(), true)
+                .map(AuthClientController::fromAuthClient)
+                .collect(Collectors.toList());
     }
     
-    @PostMapping("/")
-    public ResponseEntity<AuthClientResponse> addClient(@RequestBody AuthClientRequest req) {
-        return ResponseEntity.ok(AuthClientResponse.fromAuthClient(authClientService.addAuthClient(AuthClientRequest.toAuthClient(req))));
+    @PostMapping("")
+    public AuthClientResponse addClient(@RequestBody AuthClientRequest req) {
+        return AuthClientController.fromAuthClient(authClientService.addAuthClient(AuthClientController.toAuthClient(req)));
     }
     
     @DeleteMapping("/{id}")
     public void deleteClient(@PathVariable String id) {
         authClientService.deleteAuthClient(id);
+    }
+    
+    private static AuthClient toAuthClient(AuthClientRequest req) {
+        return new AuthClient(req.name());
+    }
+    
+    private static AuthClientResponse fromAuthClient(AuthClient authClient) {
+        return ImmutableAuthClientResponse.builder()
+                .clientId(authClient.getClientId())
+                .clientSecret(authClient.getClientSecret())
+                .id(authClient.getId())
+                .name(authClient.getName())
+                .build();
     }
 
 }
