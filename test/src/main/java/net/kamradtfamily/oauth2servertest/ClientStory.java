@@ -23,7 +23,6 @@
  */
 package net.kamradtfamily.oauth2servertest;
 
-import java.util.UUID;
 import javax.ws.rs.core.MediaType;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
@@ -35,7 +34,6 @@ import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
 import java.io.IOException;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.ws.rs.core.HttpHeaders;
 /**
  *
@@ -54,7 +52,7 @@ public class ClientStory {
 
     @When("the POST verb is issued to the server along with the name")
     public void whenPost() throws IOException {
-        JsonReader ret = new JdkRequest("http://localhost:8888")
+        JsonObject json = new JdkRequest("http://localhost:8888")
                 .uri().path("/client").back()
                 .method(Request.POST)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -62,8 +60,7 @@ public class ClientStory {
                 .header(HttpHeaders.AUTHORIZATION, "Basic dXNlcjpwYXNzd29yZA==") // hard coding auth user:password
                 .body().set("{ \"name\": \""+name+"\" }").back()
                 .fetch()
-                .as(JsonResponse.class).json();
-        JsonObject json = ret.readObject();
+                .as(JsonResponse.class).json().readObject();
         System.out.println("post returned '" + json.toString() + "'");
         this.id = json.getString("id");
     }
