@@ -22,7 +22,7 @@
             <version>1.17.2</version>
         </dependency>
         <dependency>
-            <groupId>net.kamradtfamily.OAuth2Server</groupId>
+            <groupId>net.kamradtfamily.oauth2server</groupId>
             <artifactId>oauth2api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
