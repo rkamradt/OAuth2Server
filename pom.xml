@@ -27,5 +27,6 @@
 
     <modules>
       <module>server</module>
+      <module>test</module>
     </modules>
 </project>

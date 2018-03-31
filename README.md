@@ -8,6 +8,7 @@ To build:
   mvn clean install
 
 To create Docker image:
+  cd server
   ./dockerbuild.sh
 
 To run:
