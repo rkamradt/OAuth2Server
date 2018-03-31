@@ -7,7 +7,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>oauth2servertest</artifactId>
+    <artifactId>oauth2test</artifactId>
     <name>OAuth2Server Integration Tests</name>
 
     <dependencies>

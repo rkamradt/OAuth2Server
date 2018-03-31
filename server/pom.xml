@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>OAuth2Server</artifactId>
+    <artifactId>oauth2server</artifactId>
     <packaging>jar</packaging>
 
     <name>OAuth2Server server</name>
