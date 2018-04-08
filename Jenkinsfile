@@ -6,7 +6,8 @@ pipeline {
                 sh '''
                     cd server
                     docker-compose up -d
-                    curl --retry 40 --retry-connrefused http://localhost:8888/client
+                    rc = curl --retry 40 --retry-connrefused http://localhost:8888/client
+                    echo curl returned $rc
                 '''
             }
         }
