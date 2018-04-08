@@ -8,12 +8,18 @@ pipeline {
                     docker-compose up -d
                     sleep 40s
                 '''
+                timeout(time: 3, unit: 'SECONDS') {
+                    retry(50) {
+                        curl http://localhost:8888/client
+                    }
+                }
             }
         }
         stage('Run Tests') {
             agent {
                 docker {
                     image 'maven:3.5-alpine'
+                    args '-v /var/lib/jenkins/workspace/.m2:/root/.m2'
                 }
             }
             steps {
