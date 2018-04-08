@@ -7,9 +7,9 @@ pipeline {
                     cd server
                     docker-compose up -d
                 '''
-                timeout(time: 3, unit: 'SECONDS') {
-                    retry(50) {
-                        sh 'curl http://localhost:8888/client'
+                timeout(time: 10, unit: 'SECONDS') {
+                    retry(10) {
+                        sh 'curl -s http://localhost:8888/client'
                     }
                 }
             }
