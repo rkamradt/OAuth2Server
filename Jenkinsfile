@@ -6,12 +6,8 @@ pipeline {
                 sh '''
                     cd server
                     docker-compose up -d
+                    curl --retry 40 --retry-connrefused http://localhost:8888/client
                 '''
-                timeout(time: 10, unit: 'SECONDS') {
-                    retry(10) {
-                        sh 'curl -s http://localhost:8888/client'
-                    }
-                }
             }
         }
         stage('Run Tests') {
