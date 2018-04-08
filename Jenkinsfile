@@ -6,11 +6,10 @@ pipeline {
                 sh '''
                     cd server
                     docker-compose up -d
-                    sleep 40s
                 '''
                 timeout(time: 3, unit: 'SECONDS') {
                     retry(50) {
-                        curl http://localhost:8888/client
+                        sh 'curl http://localhost:8888/client'
                     }
                 }
             }
