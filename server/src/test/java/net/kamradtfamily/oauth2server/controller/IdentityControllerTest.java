@@ -26,15 +26,16 @@ package net.kamradtfamily.oauth2server.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import net.kamradtfamily.oauth2server.data.Token;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.response.IdentityResponse;
-import net.kamradtfamily.oauth2server.service.AuthClientServiceTest;
 import net.kamradtfamily.oauth2server.service.AuthTokenService;
+import net.kamradtfamily.oauth2server.service.AuthTokenServiceTest;
+import net.kamradtfamily.oauth2server.useridserver.ImmutableUserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdServer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,7 +50,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 public class IdentityControllerTest {
     IdentityController instance;
-    AuthClientDAO authTokenDAO;
+    UserIdServer userIdService;
     AuthTokenService authTokenService;
 
     public IdentityControllerTest() {
@@ -66,15 +67,20 @@ public class IdentityControllerTest {
     @Before
     public void setUp() {
         instance = new IdentityController();
-        authTokenDAO = new AuthClientServiceTest.MockAuthClientDAO();
+        userIdService = new AuthTokenServiceTest.MockUserIdServer();
         authTokenService = new AuthTokenService();
         TokenDAO tokenDao = new MockTokenDAO();
         ReflectionTestUtils.setField(authTokenService, "tokenDao", tokenDao);
-        ReflectionTestUtils.setField(authTokenService, "authClientDao", authTokenDAO);
+        ReflectionTestUtils.setField(authTokenService, "userIdService", userIdService);
         ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
-        ReflectionTestUtils.setField(instance, "authClientDao", authTokenDAO);
-        authTokenDAO.save(new AuthClient("name1"));
-
+        ReflectionTestUtils.setField(instance, "userIdService", userIdService);
+        userIdService.save(ImmutableUserIdResponse.builder()
+            .id("id1")
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .name("name")
+            .scope("scope")
+            .build());
     }
     
     @After
@@ -87,11 +93,11 @@ public class IdentityControllerTest {
     @Test
     public void testGetIdentity() {
         System.out.println("getIdentity");
-        AuthClient authClient = authTokenDAO.findAll().iterator().next();
-        AccessTokenResponse token = authTokenService.getClientCredentialToken(authClient.getClientId(), authClient.getScope());
+        UserIdResponse userId = userIdService.findAll().iterator().next();
+        AccessTokenResponse token = authTokenService.getClientCredentialToken(userId.clientId(), userId.scope());
         IdentityResponse result = instance.getIdentity(token.access_token());
         assertNotNull(result);
-        assertEquals(authClient.getClientId(), result.clientId());
+        assertEquals(userId.clientId(), result.clientId());
         try {
             instance.getIdentity("badtoken");
             fail("expeceted exception not thrown");

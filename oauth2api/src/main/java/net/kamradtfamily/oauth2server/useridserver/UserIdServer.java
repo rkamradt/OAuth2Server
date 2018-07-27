@@ -21,46 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.data;
+package net.kamradtfamily.oauth2server.useridserver;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  *
- * A simple delagate object that narrows down the redis functions
+ * This interface represents all or part of the REST contract of the useridservice API
  * 
- * @author randalkamradt
+ * @author rkamradt
  */
-@Component
-public class AuthClientDAO {
-    
-    @Autowired
-    AuthClientRepository repository;
-
-    public Optional<AuthClient> findById(String id) {
-        return repository.findById(id);
-    }
-
-    public Iterable<AuthClient> findAll() {
-        return repository.findAll();
-    }
-
-    public AuthClient save(AuthClient authClient) {
-        return repository.save(authClient);
-    }
-
-    public void deleteById(String id) {
-        repository.deleteById(id);
-    }
-
-    public Optional<AuthClient> findByClientId(String clientId) {
-        // todo optimize
-        return StreamSupport.stream(findAll().spliterator(),true)
-                .filter(c -> c.getClientId().equals(clientId))
-                .findFirst();
-    }
-
+public interface UserIdServer {
+    Optional<UserIdResponse> getUserId(String userId);
+    public void save(UserIdResponse scope);
+    public List<UserIdResponse> findAll();
 }

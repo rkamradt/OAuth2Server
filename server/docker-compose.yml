@@ -1,10 +1,28 @@
 version: '2'
 services:
-  web:
-    image: oauth2server:latest
+  oauth2:
+    build: .
     ports:
     - "8888:8080"
-    links:
-    - redis
+    networks:
+      - network
+  idapi:
+    image: rlkamradt/useridservice
+    ports:
+      - "3000:3000"
+    networks:
+      - network
+  intidapi:
+    image: rlkamradt/useridservice
+    environment:
+      - NO_AUTH=true
+    ports:
+      - "3001:3000"
+    networks:
+      - network
   redis:
-    image: redis:4.0.4-alpine
+    image: redis:alpine
+    networks:
+      - network
+networks:
+  network:

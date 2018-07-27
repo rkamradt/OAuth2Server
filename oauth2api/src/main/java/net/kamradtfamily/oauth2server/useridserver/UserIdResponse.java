@@ -21,15 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.kamradtfamily.oauth2server.data;
+package net.kamradtfamily.oauth2server.useridserver;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.immutables.value.Value;
 
 /**
  *
- * @author randalkamradt
+ * @author rkamradt
  */
-@Repository
-public interface AuthClientRepository extends CrudRepository<AuthClient, String> {}
+@Value.Immutable
+@JsonDeserialize(as = ImmutableUserIdResponse.class)
+public interface UserIdResponse {
+    String id();
+    String clientSecret();
+    String clientId();
+    String name();
+    String scope();
+}

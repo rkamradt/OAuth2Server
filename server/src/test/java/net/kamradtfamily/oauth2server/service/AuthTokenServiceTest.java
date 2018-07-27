@@ -23,13 +23,19 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import net.kamradtfamily.oauth2server.controller.IdentityControllerTest.MockTokenDAO;
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
+import net.kamradtfamily.oauth2server.useridserver.ImmutableUserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdServer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,7 +51,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class AuthTokenServiceTest {
     
     private AuthTokenService instance;
-    private AuthClientDAO authTokenDAO;
+    private UserIdServer userIdService;
 
     public AuthTokenServiceTest() {
     }
@@ -61,11 +67,17 @@ public class AuthTokenServiceTest {
     @Before
     public void setUp() {
         instance = new AuthTokenService();
-        authTokenDAO = new AuthClientServiceTest.MockAuthClientDAO();
+        userIdService = new MockUserIdServer();
         TokenDAO tokenDao = new MockTokenDAO();
         ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
-        ReflectionTestUtils.setField(instance, "authClientDao", authTokenDAO);
-        authTokenDAO.save(new AuthClient("name1"));
+        ReflectionTestUtils.setField(instance, "userIdService", userIdService);
+        userIdService.save(ImmutableUserIdResponse.builder()
+            .id("id1")
+            .clientId("clientId")
+            .clientSecret("clientSecret")
+            .name("name")
+            .scope("scope")
+            .build());
     }
     
     @After
@@ -111,10 +123,10 @@ public class AuthTokenServiceTest {
     @Test
     public void testGetClientCredentialToken() {
         System.out.println("getClientCredentialToken");
-        AuthClient authClient = authTokenDAO.findAll().iterator().next();
-        String clientId = authClient.getClientId();
-        String clientSecret = authClient.getClientSecret();
-        String scope = authClient.getScope();
+        UserIdResponse userId = userIdService.findAll().iterator().next();
+        String clientId = userId.clientId();
+        String clientSecret = userId.clientSecret();
+        String scope = userId.scope();
         AccessTokenResponse response = instance.getClientCredentialToken(clientId, scope);
         assertNotNull(response);
         assertNotNull(response.access_token());
@@ -150,6 +162,29 @@ public class AuthTokenServiceTest {
         } catch(UnsupportedOperationException ex) {
             
         }
+    }
+    public static class MockUserIdServer implements UserIdServer {
+        Map<String, UserIdResponse> data = new HashMap<>();
+        public MockUserIdServer() {
+        }
+        @Override
+        public Optional<UserIdResponse> getUserId(String id) {
+            if(data.containsKey(id)) {
+                return Optional.of(data.get(id));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void save(UserIdResponse scope) {
+            data.put(scope.clientId(), scope);
+        }
+
+        @Override
+        public List<UserIdResponse> findAll() {
+            return data.values().stream().collect(Collectors.toList());
+        }
+
     }
     
 }

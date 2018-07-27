@@ -25,17 +25,13 @@ package net.kamradtfamily.oauth2server.config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.stream.StreamSupport;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -50,28 +46,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String REALM = "MY_TEST_REALM";
     private final static org.slf4j.Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
-
-    @Autowired
-    AuthClientDAO authClient;
-    
-    @Autowired
-    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("ADMIN");
-        try {
-            // need to be able to add without restarting
-        StreamSupport.stream(authClient.findAll().spliterator(),false)
-                .forEach(c -> {
-                    try {
-                        log.info("registring " + c + " with global security");
-                        auth.inMemoryAuthentication().withUser(c.getClientId()).password("{noop}" + c.getClientSecret()).roles("ADMIN");
-                    } catch (Exception ex) {
-                        log.warn("unable to register client/client secret", ex);
-                    }
-        });
-        } catch(Exception ex) {
-            log.warn("unable to register clients/client secrets", ex);
-        }
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

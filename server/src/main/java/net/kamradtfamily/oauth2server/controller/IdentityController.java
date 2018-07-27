@@ -23,13 +23,13 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import net.kamradtfamily.oauth2server.data.Token;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.response.IdentityResponse;
 import net.kamradtfamily.oauth2server.response.ImmutableIdentityResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("/identity")
 public class IdentityController {
 
-    @Autowired
-    private AuthClientDAO authClientDao;
+    private UserIdServer userIdService;
 
     @Autowired
     private TokenDAO tokenDao;
@@ -53,15 +52,15 @@ public class IdentityController {
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         Token t = tokenDao.findById(token).orElseThrow(() -> new EntityNotFoundException("token not found"));
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
-        AuthClient authClient = authClientDao.findById(t.getClientId()).orElseThrow(() -> new EntityNotFoundException("token not valid"));
-        return IdentityController.fromAuthClient(authClient);
+        UserIdResponse userId = userIdService.getUserId(t.getClientId()).orElseThrow(() -> new EntityNotFoundException(t.getClientId()));
+        return IdentityController.fromUserId(userId, t.getClientId());
     }
-    private static IdentityResponse fromAuthClient(AuthClient authClient) {
+    private static IdentityResponse fromUserId(UserIdResponse userId, String clientId) {
         return ImmutableIdentityResponse.builder()
-                .clientId(authClient.getClientId())
-                .id(authClient.getId())
-                .name(authClient.getName())
-                .role(authClient.getScope())
+                .clientId(clientId)
+                .id(userId.id())
+                .name(userId.name())
+                .role(userId.scope())
                 .build();
     }
     

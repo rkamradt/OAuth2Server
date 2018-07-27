@@ -1,1 +1,2 @@
-docker build --tag=oauth2server:latest --rm=true .
+docker build --tag rlkamradt/oauth2service .
+docker push rlkamradt/oauth2service

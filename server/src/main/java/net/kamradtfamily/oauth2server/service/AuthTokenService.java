@@ -23,8 +23,6 @@
  */
 package net.kamradtfamily.oauth2server.service;
 
-import net.kamradtfamily.oauth2server.data.AuthClient;
-import net.kamradtfamily.oauth2server.data.AuthClientDAO;
 import net.kamradtfamily.oauth2server.data.Token;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
@@ -32,6 +30,8 @@ import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
 import net.kamradtfamily.oauth2server.exception.ForbiddenException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.response.ImmutableAccessTokenResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdResponse;
+import net.kamradtfamily.oauth2server.useridserver.UserIdServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,8 +43,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class AuthTokenService {
 
-    @Autowired
-    private AuthClientDAO authClientDao;
+    private UserIdServer userIdService;
     
     @Autowired
     private TokenDAO tokenDao;
@@ -95,11 +94,11 @@ public class AuthTokenService {
             throw new BadRequestException("client_secret must be present");
         }
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
-        AuthClient authClient = authClientDao.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("client_id not known"));
-        if(!clientSecret.equals(authClient.getClientSecret())) {
+        UserIdResponse userId = userIdService.getUserId(clientId).orElseThrow(() -> new EntityNotFoundException(clientId));
+        if(!clientSecret.equals(userId.clientSecret())) {
             throw new ForbiddenException("forbidden");
         }
-        Token t = tokenDao.save(new Token(authClient.getId()));
+        Token t = tokenDao.save(new Token(userId.id()));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)
@@ -123,8 +122,8 @@ public class AuthTokenService {
             throw new BadRequestException("client_id must be present");
         }
         @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
-        AuthClient authClient = authClientDao.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("client_id not known"));
-        Token t = tokenDao.save(new Token(authClient.getId()));
+        UserIdResponse userId = userIdService.getUserId(clientId).orElseThrow(() -> new EntityNotFoundException(clientId));
+        Token t = tokenDao.save(new Token(userId.id()));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)
