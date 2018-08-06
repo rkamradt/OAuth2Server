@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("/identity")
 public class IdentityController {
-
+    @Autowired
     private UserIdServer userIdService;
 
     @Autowired

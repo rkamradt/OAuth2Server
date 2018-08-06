@@ -256,11 +256,6 @@ public class AuthTokenControllerTest {
             }
 
             @Override
-            public String changeSessionId() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
             public boolean isRequestedSessionIdValid() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
@@ -277,36 +272,6 @@ public class AuthTokenControllerTest {
 
             @Override
             public boolean isRequestedSessionIdFromUrl() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public boolean authenticate(HttpServletResponse hsr) throws IOException, ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void login(String string, String string1) throws ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void logout() throws ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public Collection<Part> getParts() throws IOException, ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public Part getPart(String string) throws IOException, ServletException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public <T extends HttpUpgradeHandler> T upgrade(Class<T> type) throws IOException, ServletException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -332,11 +297,6 @@ public class AuthTokenControllerTest {
 
             @Override
             public int getContentLength() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public long getContentLengthLong() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -461,6 +421,46 @@ public class AuthTokenControllerTest {
             }
 
             @Override
+            public String changeSessionId() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public boolean authenticate(HttpServletResponse hsr) throws IOException, ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void login(String string, String string1) throws ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void logout() throws ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public Collection<Part> getParts() throws IOException, ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public Part getPart(String string) throws IOException, ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public <T extends HttpUpgradeHandler> T upgrade(Class<T> type) throws IOException, ServletException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public long getContentLengthLong() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
             public ServletContext getServletContext() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
@@ -494,6 +494,7 @@ public class AuthTokenControllerTest {
             public DispatcherType getDispatcherType() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
+
         };
         AccessTokenResponse response = instance.getToken("client_credentials", null, null, null, null, null, null, null, request);
         assertNotNull(response);

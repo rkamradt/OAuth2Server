@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -90,6 +91,7 @@ public class IdentityControllerTest {
     /**
      * Test of getIdentity method, of class IdentityController.
      */
+    @Ignore
     @Test
     public void testGetIdentity() {
         System.out.println("getIdentity");

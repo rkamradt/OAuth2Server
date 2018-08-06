@@ -25,6 +25,10 @@ package net.kamradtfamily.oauth2server.useridserver;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
@@ -32,8 +36,12 @@ import java.util.Optional;
  * 
  * @author rkamradt
  */
+@FeignClient(name="users", url="${users.api.url}")
 public interface UserIdServer {
-    Optional<UserIdResponse> getUserId(String userId);
+    @RequestMapping(method = RequestMethod.GET, value = "/users/{userId}")
+    Optional<UserIdResponse> getUserId(@PathVariable("userId") String userId);
+    @RequestMapping(method = RequestMethod.POST, value = "/users")
     public void save(UserIdResponse scope);
+    @RequestMapping(method = RequestMethod.GET, value = "/users")
     public List<UserIdResponse> findAll();
 }

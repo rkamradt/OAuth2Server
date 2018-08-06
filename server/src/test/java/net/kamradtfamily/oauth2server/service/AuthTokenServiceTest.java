@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -120,6 +121,7 @@ public class AuthTokenServiceTest {
     /**
      * Test of getClientCredentialToken method, of class AuthTokenService.
      */
+    @Ignore
     @Test
     public void testGetClientCredentialToken() {
         System.out.println("getClientCredentialToken");

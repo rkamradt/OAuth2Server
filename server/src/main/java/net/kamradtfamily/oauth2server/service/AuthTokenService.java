@@ -43,6 +43,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class AuthTokenService {
 
+    @Autowired
     private UserIdServer userIdService;
     
     @Autowired
