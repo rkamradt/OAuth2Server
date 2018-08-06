@@ -25,10 +25,12 @@ package net.kamradtfamily.oauth2server.useridserver;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  *
@@ -40,7 +42,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface UserIdServer {
     @RequestMapping(method = RequestMethod.GET, value = "/users/{userId}")
     Optional<UserIdResponse> getUserId(@PathVariable("userId") String userId);
-    @RequestMapping(method = RequestMethod.POST, value = "/users")
+    @RequestMapping(method = RequestMethod.GET, value = "/users/{userId}/confirm")
+    Optional<UserIdResponse> confirm(@PathVariable("userId") String userId, @RequestHeader(name="password") String password);
+    @RequestMapping(method = RequestMethod.POST, value = "/users", consumes = "application/json")
     public void save(UserIdResponse scope);
     @RequestMapping(method = RequestMethod.GET, value = "/users")
     public List<UserIdResponse> findAll();

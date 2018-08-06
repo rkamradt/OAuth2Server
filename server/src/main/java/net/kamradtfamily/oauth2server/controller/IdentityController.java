@@ -35,11 +35,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 /**
  *
  * @author randalkamradt
  */
-@RestController("/identity")
+@RestController
 public class IdentityController {
     @Autowired
     private UserIdServer userIdService;
@@ -47,20 +49,17 @@ public class IdentityController {
     @Autowired
     private TokenDAO tokenDao;
     
-    @GetMapping("/{token}")
+    @GetMapping("/identity/{token}")
     IdentityResponse getIdentity(@PathVariable String token) {
-        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         Token t = tokenDao.findById(token).orElseThrow(() -> new EntityNotFoundException("token not found"));
-        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         UserIdResponse userId = userIdService.getUserId(t.getClientId()).orElseThrow(() -> new EntityNotFoundException(t.getClientId()));
         return IdentityController.fromUserId(userId, t.getClientId());
     }
     private static IdentityResponse fromUserId(UserIdResponse userId, String clientId) {
         return ImmutableIdentityResponse.builder()
                 .clientId(clientId)
-                .id(userId.id())
-                .name(userId.name())
-                .role(userId.scope())
+                .id(userId.username())
+                .role(Optional.empty())
                 .build();
     }
     

@@ -36,6 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 /**
  *
  * @author randalkamradt
@@ -58,7 +60,7 @@ public class AuthTokenService {
      * @param scope 
      * @return  
      */
-    public AccessTokenResponse getRefreshToken(String refreshToken, String scope) {
+    public AccessTokenResponse getRefreshToken(String refreshToken, Optional<String> scope) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     /**
@@ -87,19 +89,15 @@ public class AuthTokenService {
      * @param clientSecret
      * @return 
      */
-    public AccessTokenResponse getPasswordToken(String clientId, String clientSecret, String scope) {
+    public AccessTokenResponse getPasswordToken(String clientId, String clientSecret, Optional<String> scope) {
         if(StringUtils.isEmpty(clientId)) {
             throw new BadRequestException("client_id must be present");
         }
         if(StringUtils.isEmpty(clientSecret)) {
             throw new BadRequestException("client_secret must be present");
         }
-        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
-        UserIdResponse userId = userIdService.getUserId(clientId).orElseThrow(() -> new EntityNotFoundException(clientId));
-        if(!clientSecret.equals(userId.clientSecret())) {
-            throw new ForbiddenException("forbidden");
-        }
-        Token t = tokenDao.save(new Token(userId.id()));
+        UserIdResponse userId = userIdService.confirm(clientId, clientSecret).orElseThrow(() -> new EntityNotFoundException(clientId));
+        Token t = tokenDao.save(new Token(userId.username()));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)
@@ -118,13 +116,12 @@ public class AuthTokenService {
      * @param scope
      * @return 
      */
-    public AccessTokenResponse getClientCredentialToken(String clientId, String scope) {
+    public AccessTokenResponse getClientCredentialToken(String clientId, Optional<String> scope) {
         if(StringUtils.isEmpty(clientId)) {
             throw new BadRequestException("client_id must be present");
         }
-        @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
         UserIdResponse userId = userIdService.getUserId(clientId).orElseThrow(() -> new EntityNotFoundException(clientId));
-        Token t = tokenDao.save(new Token(userId.id()));
+        Token t = tokenDao.save(new Token(userId.username()));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)

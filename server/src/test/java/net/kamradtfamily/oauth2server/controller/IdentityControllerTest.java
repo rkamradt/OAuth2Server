@@ -76,11 +76,9 @@ public class IdentityControllerTest {
         ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(instance, "userIdService", userIdService);
         userIdService.save(ImmutableUserIdResponse.builder()
-            .id("id1")
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .name("name")
-            .scope("scope")
+            .username("id1")
+            .fullname("name")
+            .email("email@email.com")
             .build());
     }
     
@@ -91,15 +89,14 @@ public class IdentityControllerTest {
     /**
      * Test of getIdentity method, of class IdentityController.
      */
-    @Ignore
     @Test
     public void testGetIdentity() {
         System.out.println("getIdentity");
         UserIdResponse userId = userIdService.findAll().iterator().next();
-        AccessTokenResponse token = authTokenService.getClientCredentialToken(userId.clientId(), userId.scope());
+        AccessTokenResponse token = authTokenService.getClientCredentialToken(userId.username(), Optional.empty());
         IdentityResponse result = instance.getIdentity(token.access_token());
         assertNotNull(result);
-        assertEquals(userId.clientId(), result.clientId());
+        assertEquals(userId.username(), result.clientId());
         try {
             instance.getIdentity("badtoken");
             fail("expeceted exception not thrown");

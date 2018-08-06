@@ -27,6 +27,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.kamradtfamily.oauth2server.annotation.Nullable;
 import org.immutables.value.Value;
 
+import java.util.Optional;
+
 /**
  *
  * @author randalkamradt
@@ -34,8 +36,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableIdentityResponse.class)
 public interface IdentityResponse {
-    String name();
     String id();
     String clientId();
-    @Nullable String role();
+    Optional<String> role();
 }

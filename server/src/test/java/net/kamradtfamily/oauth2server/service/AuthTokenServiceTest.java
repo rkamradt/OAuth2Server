@@ -73,11 +73,9 @@ public class AuthTokenServiceTest {
         ReflectionTestUtils.setField(instance, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(instance, "userIdService", userIdService);
         userIdService.save(ImmutableUserIdResponse.builder()
-            .id("id1")
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .name("name")
-            .scope("scope")
+            .username("id1")
+            .fullname("name")
+            .email("email@email.com")
             .build());
     }
     
@@ -94,7 +92,7 @@ public class AuthTokenServiceTest {
         String refreshToken = "";
         String scope = "scope";
         try {
-            instance.getRefreshToken(refreshToken, scope);
+            instance.getRefreshToken(refreshToken, Optional.empty());
             fail("expected operation failed");
         } catch(UnsupportedOperationException ex) {
             
@@ -121,20 +119,17 @@ public class AuthTokenServiceTest {
     /**
      * Test of getClientCredentialToken method, of class AuthTokenService.
      */
-    @Ignore
     @Test
     public void testGetClientCredentialToken() {
         System.out.println("getClientCredentialToken");
         UserIdResponse userId = userIdService.findAll().iterator().next();
-        String clientId = userId.clientId();
-        String clientSecret = userId.clientSecret();
-        String scope = userId.scope();
-        AccessTokenResponse response = instance.getClientCredentialToken(clientId, scope);
+        String clientId = userId.username();
+        AccessTokenResponse response = instance.getClientCredentialToken(clientId, Optional.empty());
         assertNotNull(response);
         assertNotNull(response.access_token());
         assertEquals("bearer", response.token_type());
         assertEquals(3600, response.expires_in());
-        assertEquals(scope, response.scope());
+        assertTrue(!response.scope().isPresent());
         try {
             instance.getClientCredentialToken(null, null);
             fail("expected exception not thrown");
@@ -145,7 +140,7 @@ public class AuthTokenServiceTest {
             instance.getClientCredentialToken("badclientid", null);
             fail("expected exception not thrown");
         } catch(EntityNotFoundException ex) {
-            assertEquals("client_id not known", ex.getMessage());
+            assertEquals("badclientid", ex.getMessage());
         }
     }
 
@@ -178,8 +173,13 @@ public class AuthTokenServiceTest {
         }
 
         @Override
-        public void save(UserIdResponse scope) {
-            data.put(scope.clientId(), scope);
+        public Optional<UserIdResponse> confirm(String userId, String password) {
+            return getUserId(userId);
+        }
+
+        @Override
+        public void save(UserIdResponse user) {
+            data.put(user.username(), user);
         }
 
         @Override

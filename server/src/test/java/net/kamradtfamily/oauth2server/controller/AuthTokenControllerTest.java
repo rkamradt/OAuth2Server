@@ -92,11 +92,9 @@ public class AuthTokenControllerTest {
         ReflectionTestUtils.setField(authTokenService, "userIdService", userIdService);
         ReflectionTestUtils.setField(instance, "authTokenService", authTokenService);
         userIdService.save(ImmutableUserIdResponse.builder()
-            .id("id1")
-            .clientId("clientId")
-            .clientSecret("clientSecret")
-            .name("name")
-            .scope("scope")
+            .username("id1")
+            .fullname("name")
+            .email("email@email.com")
             .build());
     }
     
@@ -139,8 +137,8 @@ public class AuthTokenControllerTest {
     public void testGetClientCredentialToken() {
         System.out.println("getClientCredentialToken");
         UserIdResponse userId = userIdService.findAll().iterator().next();
-        String clientId = userId.clientId();
-        String scope = userId.scope();
+        String clientId = userId.username();
+        String scope = "";
         HttpServletRequest request = new HttpServletRequest() {
 
             @Override
@@ -511,10 +509,10 @@ public class AuthTokenControllerTest {
     public void testGetPasswordToken() {
         System.out.println("getClientCredentialToken");
         UserIdResponse userId = userIdService.findAll().iterator().next();
-        String clientId = userId.clientId();
-        String clientSecret = userId.clientSecret();
-        String scope = userId.scope();
-        AccessTokenResponse response = instance.getToken("password", null, null, null, clientId, clientSecret, null, null, null);
+        String clientId = userId.username();
+        String clientSecret = "password";
+        String scope = "";
+        AccessTokenResponse response = instance.getToken("password", null, null, null, clientId, clientSecret, scope, null, null);
         assertNotNull(response);
         assertNotNull(response.access_token());
         assertEquals("bearer", response.token_type());

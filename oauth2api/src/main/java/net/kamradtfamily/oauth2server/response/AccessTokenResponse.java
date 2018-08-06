@@ -27,6 +27,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import net.kamradtfamily.oauth2server.annotation.Nullable;
 
+import java.util.Optional;
+
 /**
  *   {
  *     "access_token":"2YotnFZFEjr1zCsicMWpAA",
@@ -43,6 +45,6 @@ public interface AccessTokenResponse {
     String access_token();
     String token_type();
     int expires_in();
-    @Nullable String refresh_token();
-    @Nullable String scope();
+    Optional<String> refresh_token();
+    Optional<String> scope();
 }

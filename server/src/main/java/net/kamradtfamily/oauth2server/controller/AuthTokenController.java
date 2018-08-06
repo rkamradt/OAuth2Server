@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 /**
  *
  * @author randalkamradt
@@ -60,11 +62,11 @@ public class AuthTokenController {
             case "authorization_code":
                 return authTokenService.getAuthCodeToken(code, redirect_uri, client_id);
             case "password":
-                return authTokenService.getPasswordToken(username, password, scope);
+                return authTokenService.getPasswordToken(username, password, Optional.ofNullable(scope));
             case "refresh_token":
-                return authTokenService.getRefreshToken(refresh_token, scope);
+                return authTokenService.getRefreshToken(refresh_token, Optional.ofNullable(scope));
             case "client_credentials":
-                return authTokenService.getClientCredentialToken(request.getUserPrincipal().getName(), scope);
+                return authTokenService.getClientCredentialToken(request.getUserPrincipal().getName(), Optional.ofNullable(scope));
             default:
                 throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");
         }

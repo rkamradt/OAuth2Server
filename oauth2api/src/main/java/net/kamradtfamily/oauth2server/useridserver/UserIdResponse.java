@@ -26,6 +26,8 @@ package net.kamradtfamily.oauth2server.useridserver;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
+import java.util.Optional;
+
 /**
  *
  * @author rkamradt
@@ -33,9 +35,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableUserIdResponse.class)
 public interface UserIdResponse {
-    String id();
-    String clientSecret();
-    String clientId();
-    String name();
-    String scope();
+    String username();
+    Optional<String> fullname();
+    Optional<String> email();
 }
