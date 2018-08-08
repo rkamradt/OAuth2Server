@@ -23,42 +23,42 @@
  */
 package net.kamradtfamily.oauth2server.config;
 
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  *
- * @author randalkamradt
+ * @author rkamradt
  */
 @Configuration
-public class RedisConfig {
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final Logger LOGGER = Logger.getLogger(SecurityConfig.class);
     
-    @Value("${jedis.host.name}")
-    public String hostName;
-    @Value("${jedis.host.port}")
-    public Integer hostPort;
-
-    @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
-        RedisStandaloneConfiguration config = jedisConFactory.getStandaloneConfiguration();
-        if(config == null) {
-            throw new IllegalStateException("no stand alone configuration available");
-        }
-        config.setHostName(hostName);
-        config.setPort(hostPort);
-        return jedisConFactory;
+    @Value("${security.client.id}")
+    private String clientId;
+    @Value("${security.client.secret}")
+    private String clientSecret;
+    
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+          .withUser(clientId).password(clientSecret)
+          .authorities("ADMIN");
     }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        return template;
+ 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+          .anyRequest().authenticated()
+          .and()
+          .httpBasic();
     }
-
+ 
 }

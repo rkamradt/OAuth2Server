@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+        stage('Compile') {
+            steps {
+                sh 'mvn install'
+            }
+        }
         stage('Start Up Server') {
             steps {
                 sh '''
@@ -17,7 +22,10 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn install'
+                sh '''
+                    cd test
+                    mvn install
+                '''
             }
         }
     }

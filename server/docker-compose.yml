@@ -2,8 +2,11 @@ version: '2'
 services:
   oauth2:
     build: .
+    environment:
+      - SECURITY_CLIENT_ID=test
+      - SECURITY_CLIENT_SECRET=test
     ports:
-    - "8888:8080"
+      - "8888:8080"
     networks:
       - network
   idapi:

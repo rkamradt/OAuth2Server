@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import net.kamradtfamily.oauth2server.exception.ForbiddenException;
 
 /**
  *
@@ -66,6 +67,9 @@ public class AuthTokenController {
             case "refresh_token":
                 return authTokenService.getRefreshToken(refresh_token, Optional.ofNullable(scope));
             case "client_credentials":
+                if(request.getUserPrincipal() == null) {
+                    throw new ForbiddenException("forbidden");
+                }
                 return authTokenService.getClientCredentialToken(request.getUserPrincipal().getName(), Optional.ofNullable(scope));
             default:
                 throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");

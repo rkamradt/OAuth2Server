@@ -27,7 +27,6 @@ import net.kamradtfamily.oauth2server.data.Token;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.exception.EntityNotFoundException;
-import net.kamradtfamily.oauth2server.exception.ForbiddenException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.response.ImmutableAccessTokenResponse;
 import net.kamradtfamily.oauth2server.useridserver.UserIdResponse;

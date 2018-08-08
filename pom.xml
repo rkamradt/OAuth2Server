@@ -22,7 +22,6 @@
     <modules>
         <module>oauth2api</module>
         <module>server</module>
-        <module>test</module>
     </modules>
     
     <build>
@@ -53,6 +52,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
