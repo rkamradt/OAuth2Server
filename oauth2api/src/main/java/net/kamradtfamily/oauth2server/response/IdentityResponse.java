@@ -24,7 +24,6 @@
 package net.kamradtfamily.oauth2server.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.kamradtfamily.oauth2server.annotation.Nullable;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -38,5 +37,5 @@ import java.util.Optional;
 public interface IdentityResponse {
     String id();
     String clientId();
-    Optional<String> role();
+    Optional<String> scope();
 }

@@ -23,7 +23,7 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.service.AuthTokenService;
@@ -36,6 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import net.kamradtfamily.oauth2server.exception.ForbiddenException;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.springframework.security.core.Authentication;
 
 /**
  *
@@ -43,6 +47,13 @@ import net.kamradtfamily.oauth2server.exception.ForbiddenException;
  */
 @RestController
 public class AuthTokenController {
+    private static final Logger LOGGER = Logger.getLogger(AuthTokenController.class);
+    
+    @Value("${security.client.id}")
+    private String clientId;
+    @Value("${security.client.secret}")
+    private String clientSecret;
+    
     @Autowired
     private AuthTokenService authTokenService;
 
@@ -51,11 +62,11 @@ public class AuthTokenController {
             String code, 
             String redirect_uri, 
             String client_id, 
+            String client_secret,
             String username, 
             String password, 
             String scope, 
-            String refresh_token,
-            HttpServletRequest request) {
+            String refresh_token) {
         if(null == grant_type) {
             throw new BadRequestException("grant_type must be present");
         }
@@ -66,11 +77,11 @@ public class AuthTokenController {
                 return authTokenService.getPasswordToken(username, password, Optional.ofNullable(scope));
             case "refresh_token":
                 return authTokenService.getRefreshToken(refresh_token, Optional.ofNullable(scope));
-            case "client_credentials":
-                if(request.getUserPrincipal() == null) {
-                    throw new ForbiddenException("forbidden");
+            case "client_credentials": 
+                if(!clientId.equals(client_id) || !clientSecret.equals(client_secret)) {
+                    throw new ForbiddenException("forbidden"); // should figure out spring security to get basic auth to work
                 }
-                return authTokenService.getClientCredentialToken(request.getUserPrincipal().getName(), Optional.ofNullable(scope));
+                return authTokenService.getClientCredentialToken(client_id, Optional.ofNullable(scope));
             default:
                 throw new BadRequestException("grant_type must be authorization_code, password, client_credentials, or refresh_token");
         }

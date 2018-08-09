@@ -35,10 +35,12 @@ import org.springframework.data.redis.core.RedisHash;
 public class Token implements Serializable {
     private String id;
     private String clientId;
+    private String scope;
     
-    public Token(String clientId) {
+    public Token(String clientId, String scope) {
         this.id = UUID.randomUUID().toString();
         this.clientId = clientId;
+        this.scope = scope;
     }
 
     /**
@@ -67,5 +69,19 @@ public class Token implements Serializable {
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    /**
+     * @return the scope
+     */
+    public String getScope() {
+        return scope;
+    }
+
+    /**
+     * @param scope the scope to set
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

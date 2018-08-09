@@ -23,28 +23,6 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
 import net.kamradtfamily.oauth2server.controller.IdentityControllerTest.MockTokenDAO;
 import net.kamradtfamily.oauth2server.data.TokenDAO;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
@@ -60,7 +38,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -92,6 +69,8 @@ public class AuthTokenControllerTest {
         ReflectionTestUtils.setField(authTokenService, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(authTokenService, "userIdService", userIdService);
         ReflectionTestUtils.setField(instance, "authTokenService", authTokenService);
+        ReflectionTestUtils.setField(instance, "clientId", "id1");
+        ReflectionTestUtils.setField(instance, "clientSecret", "password");
         userIdService.save(ImmutableUserIdResponse.builder()
             .username("id1")
             .fullname("name")
@@ -139,10 +118,9 @@ public class AuthTokenControllerTest {
         System.out.println("getClientCredentialToken");
         UserIdResponse userId = userIdService.findAll().iterator().next();
         String clientId = userId.username();
+        String clientSecret = "password";
         String scope = "test";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setUserPrincipal(() -> clientId);
-        AccessTokenResponse response = instance.getToken("client_credentials", null, null, null, null, null, scope, null, request);
+        AccessTokenResponse response = instance.getToken("client_credentials", null, null, clientId, clientSecret, null, null, scope, null);
         assertNotNull(response);
         assertNotNull(response.access_token());
         assertEquals("bearer", response.token_type());
@@ -157,10 +135,10 @@ public class AuthTokenControllerTest {
     public void testGetPasswordToken() {
         System.out.println("getClientCredentialToken");
         UserIdResponse userId = userIdService.findAll().iterator().next();
-        String clientId = userId.username();
-        String clientSecret = "password";
+        String username = userId.username();
+        String password = "password";
         String scope = "";
-        AccessTokenResponse response = instance.getToken("password", null, null, null, clientId, clientSecret, scope, null, null);
+        AccessTokenResponse response = instance.getToken("password", null, null, null, null, username, password, scope, null);
         assertNotNull(response);
         assertNotNull(response.access_token());
         assertEquals("bearer", response.token_type());

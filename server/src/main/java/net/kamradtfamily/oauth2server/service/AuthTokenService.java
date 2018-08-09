@@ -83,20 +83,20 @@ public class AuthTokenService {
      * 
      * as described in RFC 6749 section 4.3.2
      * 
-     * @param clientId
+     * @param username
+     * @param password
      * @param scope
-     * @param clientSecret
      * @return 
      */
-    public AccessTokenResponse getPasswordToken(String clientId, String clientSecret, Optional<String> scope) {
-        if(StringUtils.isEmpty(clientId)) {
-            throw new BadRequestException("client_id must be present");
+    public AccessTokenResponse getPasswordToken(String username, String password, Optional<String> scope) {
+        if(StringUtils.isEmpty(username)) {
+            throw new BadRequestException("username must be present");
         }
-        if(StringUtils.isEmpty(clientSecret)) {
-            throw new BadRequestException("client_secret must be present");
+        if(StringUtils.isEmpty(password)) {
+            throw new BadRequestException("password must be present");
         }
-        UserIdResponse userId = userIdService.confirm(clientId, clientSecret).orElseThrow(() -> new EntityNotFoundException(clientId));
-        Token t = tokenDao.save(new Token(userId.username()));
+        UserIdResponse userId = userIdService.confirm(username, password).orElseThrow(() -> new EntityNotFoundException(username));
+        Token t = tokenDao.save(new Token(userId.username(), scope.orElse(null)));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)
@@ -120,7 +120,7 @@ public class AuthTokenService {
             throw new BadRequestException("client_id must be present");
         }
         UserIdResponse userId = userIdService.getUserId(clientId).orElseThrow(() -> new EntityNotFoundException(clientId));
-        Token t = tokenDao.save(new Token(userId.username()));
+        Token t = tokenDao.save(new Token(userId.username(), scope.orElse(null)));
         return ImmutableAccessTokenResponse.builder()
                 .access_token(t.getId())
                 .expires_in(3600)

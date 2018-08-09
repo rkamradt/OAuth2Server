@@ -53,13 +53,13 @@ public class IdentityController {
     IdentityResponse getIdentity(@PathVariable String token) {
         Token t = tokenDao.findById(token).orElseThrow(() -> new EntityNotFoundException("token not found"));
         UserIdResponse userId = userIdService.getUserId(t.getClientId()).orElseThrow(() -> new EntityNotFoundException(t.getClientId()));
-        return IdentityController.fromUserId(userId, t.getClientId());
+        return IdentityController.fromUserId(userId, t.getClientId(), t.getScope());
     }
-    private static IdentityResponse fromUserId(UserIdResponse userId, String clientId) {
+    private static IdentityResponse fromUserId(UserIdResponse userId, String clientId, String scope) {
         return ImmutableIdentityResponse.builder()
                 .clientId(clientId)
                 .id(userId.username())
-                .role(Optional.empty())
+                .scope(Optional.ofNullable(scope))
                 .build();
     }
     
