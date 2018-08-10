@@ -34,7 +34,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class Application implements CommandLineRunner {
 
-    private final static Logger log = LoggerFactory.getLogger(Application.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -42,7 +42,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("application is running...");
+        LOGGER.info("application is running...");
     }
 
 }

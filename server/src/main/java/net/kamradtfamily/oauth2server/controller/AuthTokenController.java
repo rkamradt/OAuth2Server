@@ -23,7 +23,6 @@
  */
 package net.kamradtfamily.oauth2server.controller;
 
-import java.security.Principal;
 import net.kamradtfamily.oauth2server.exception.BadRequestException;
 import net.kamradtfamily.oauth2server.response.AccessTokenResponse;
 import net.kamradtfamily.oauth2server.service.AuthTokenService;
@@ -38,8 +37,6 @@ import java.util.Optional;
 import net.kamradtfamily.oauth2server.exception.ForbiddenException;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-import org.springframework.security.core.Authentication;
 
 /**
  *
