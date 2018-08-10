@@ -25,7 +25,6 @@ package net.kamradtfamily.oauth2server.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
-import net.kamradtfamily.oauth2server.annotation.Nullable;
 
 import java.util.Optional;
 
